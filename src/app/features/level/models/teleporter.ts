@@ -6,14 +6,21 @@ export class Teleporter implements Tile {
   source: WritableSignal<string>;
   interactible: boolean = true;
   walkable: boolean = true;
+  private destination: number = 0;
 
   constructor() {
     this.source = signal('./sprites/teleporter.png');
   }
-  description?(): string {
+
+  description(): string {
     return 'Téléporteur';
   }
+
+  setDestination(teleporterDestination: number): void {
+    this.destination = teleporterDestination;
+  }
+
   interaction(): Interaction {
-    return {};
+    return { teleport: true, goTo: this.destination };
   }
 }

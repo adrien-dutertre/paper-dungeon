@@ -65,6 +65,7 @@ export class GameLogic {
   // Initier le jeu
   init(): void {
     this.hero.move(this.level.start() + 1);
+    this.level.activateTeleporters();
   }
 
   // Initier un tour
@@ -179,11 +180,23 @@ export class GameLogic {
       this.hero.hit(damages);
     }
 
+    // Ouvrir les portes
+    if (interaction.key) {
+      this.level.openDoors();
+    }
+
+    // Téléportation
+    if (interaction.teleport && interaction.goTo) {
+      console.log('Téléportation !');
+      this.hero.move(interaction.goTo + 1);
+    }
+
     // Augmenter l'endurance
     if (interaction.endurance) {
       this.hero.endurance();
     }
 
+    // Arrêt du héros
     if (interaction.heroStop) {
       this.hero.moves.set(0);
     }

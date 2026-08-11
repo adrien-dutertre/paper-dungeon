@@ -9,4 +9,6 @@ export interface Interaction {
   coins?: number | undefined;
   key?: boolean;
   endurance?: boolean;
+  teleport?: boolean;
+  goTo?: number;
 }

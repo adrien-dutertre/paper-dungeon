@@ -12,9 +12,16 @@ export class Door implements Tile {
   }
 
   description(): string {
-    return 'Porte fermée';
+    return this.walkable ? '' : 'Porte fermée';
   }
+
   interaction(): Interaction {
     return {};
+  }
+
+  open(): void {
+    console.info('La clé a ouvert la(les) porte(s)');
+    this.walkable = true;
+    this.source = signal('./sprites/floor.png');
   }
 }

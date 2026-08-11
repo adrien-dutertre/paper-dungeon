@@ -2,6 +2,9 @@ import { computed, inject, Injectable, signal, WritableSignal } from '@angular/c
 import { LevelParser } from './level-parser';
 import { Start } from '../models/start';
 import { ILevel } from './ilevel';
+import { Tile } from '../models/tile';
+import { Teleporter } from '../models/teleporter';
+import { Door } from '../models/door';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +14,12 @@ export class LevelService {
   floor = signal<number>(0);
 
   levels: ILevel[] = [
+    {
+      floor: 1,
+      shop: false,
+      level:
+        'w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,,,,w2,,,,w2,,,,,,w1,w1,,,,w2,,,,w2,,,,,,w1,w1,,,,w2,w2,d,w2,w2,,,,,,w1,w1,,,,,,,,,,,,,,w1,w1,,,,,,,,,,,,,,w1,w1,,,,,,,,,,,,,,w1,w1,s,k,,,,,,,,,,,,w1,w1,,x,,,,,,,,,,,,w1,w1,,,,,,,,,,,,,,w1,w1,,,,,,,,,,,,,,w1,w1,,,,,,,,,,,,,,w1,w1,,,,,,,,,,,,,,w1,w1,,,,,,,,,,,,,x,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1,w1',
+    },
     {
       floor: 1,
       shop: false,
@@ -89,6 +98,23 @@ export class LevelService {
   }
 
   start(): number {
-    return this.current().findIndex((tile) => tile instanceof Start);
+    return this.current().findIndex((tile: Tile) => tile instanceof Start);
+  }
+
+  activateTeleporters(): void {
+    const teleporters: Teleporter[] = this.current().filter(
+      (tile: Tile) => tile instanceof Teleporter,
+    );
+
+    const teleporter1Position = this.current().findIndex((tile: Tile) => tile == teleporters[0]);
+    const teleporter2Position = this.current().findIndex((tile: Tile) => tile == teleporters[1]);
+
+    teleporters[0].setDestination(teleporter2Position);
+    teleporters[1].setDestination(teleporter1Position);
+  }
+
+  openDoors(): void {
+    const doors: Door[] = this.current().filter((tile: Tile) => tile instanceof Door);
+    doors.forEach((door) => door.open());
   }
 }
