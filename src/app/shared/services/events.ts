@@ -1,34 +1,33 @@
-import { computed, effect, Injectable, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { Dice } from '../components/dice-modal/services/dice';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Events {
-  events: WritableSignal<eventType[]> = signal([]);
-  modal = computed(() => this.events().length > 0);
+  private dice = inject(Dice);
+  readonly events = signal<eventType | null>(null);
 
   add(newEvent: eventType): void {
-    this.events.update((events) => {
-      return [...events, newEvent];
-    });
+    this.events.set(newEvent);
   }
 
-  // done(): void {
-  //   this.events.update((events) => {
-  //     return events.shift();
-  //   });
-  // }
+  reset(): void {
+    this.events.set(null);
+  }
 
-  private eventEffect = effect(() => {
-    if (this.events.length > 0) {
-      console.log('Nouvel évènement:', this.events().toString());
-      this.resolveEvent();
+  resolveEvent(event: eventType): void {
+    switch (event) {
+      case 'MoveDice':
+        this.dice.roll({
+          title: 'Dé de déplacement',
+          buttonLabel: 'Ok',
+        });
+        break;
+      default:
+        break;
     }
-  });
-
-  resolveEvent(): void {
-    const firstEvent = this.events().shift();
   }
 }
 
-type eventType = 'Dice' | 'DiceThreshold' | undefined;
+type eventType = 'MoveDice' | 'CloseModal';

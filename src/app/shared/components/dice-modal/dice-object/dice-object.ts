@@ -8,7 +8,7 @@ import { Dice } from '../services/dice';
   styleUrl: './dice-object.css',
 })
 export class DiceObject {
-  throw = inject(Dice);
+  roll = inject(Dice);
 
   private readonly faces = new Map([
     [1, 'face1'],
@@ -19,5 +19,5 @@ export class DiceObject {
     [6, 'face6'],
   ]);
 
-  visibleFace = computed(() => this.faces.get(this.throw.result()));
+  visibleFace = computed(() => this.faces.get(this.roll.currentRoll()));
 }

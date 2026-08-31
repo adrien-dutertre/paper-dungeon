@@ -106,11 +106,13 @@ export class LevelService {
       (tile: Tile) => tile instanceof Teleporter,
     );
 
-    const teleporter1Position = this.current().findIndex((tile: Tile) => tile == teleporters[0]);
-    const teleporter2Position = this.current().findIndex((tile: Tile) => tile == teleporters[1]);
+    if (teleporters.length > 0) {
+      const teleporter1Position = this.current().findIndex((tile: Tile) => tile == teleporters[0]);
+      const teleporter2Position = this.current().findIndex((tile: Tile) => tile == teleporters[1]);
 
-    teleporters[0].setDestination(teleporter2Position);
-    teleporters[1].setDestination(teleporter1Position);
+      teleporters[0].setDestination(teleporter2Position);
+      teleporters[1].setDestination(teleporter1Position);
+    }
   }
 
   openDoors(): void {

@@ -1,5 +1,5 @@
 import { Interaction } from './interaction';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { Hero } from '../../features/hero-sheet/services/hero';
 import { Dice } from '../components/dice-modal/services/dice';
 import { Tile } from '../../features/level/models/tile';
@@ -62,6 +62,17 @@ export class GameLogic {
 
   modifyer_dice: number = 1;
 
+  constructor() {
+    effect(() => {
+      const event = this.eventsService.events();
+      if (!event) {
+        return;
+      } else {
+        this.eventsService.resolveEvent(event);
+      }
+    });
+  }
+
   // Initier le jeu
   init(): void {
     this.hero.move(this.level.start() + 1);
@@ -70,11 +81,7 @@ export class GameLogic {
 
   // Initier un tour
   startTurn(): void {
-    this.eventsService.add('Dice');
-    this.dice.throw({
-      title: 'Dé de déplacement',
-      buttonLabel: 'Ok',
-    });
+    this.eventsService.add('MoveDice');
     this.cardinal_movement.set(this.dice.result() % 2 == 0);
     this.hero.moves.set(this.isMovable() ? this.dice.result() : 0);
   }
@@ -131,7 +138,7 @@ export class GameLogic {
     if (interaction.coinLoot) {
       let coins = interaction.coins;
       if (coins == undefined) {
-        this.dice.throw({
+        this.dice.roll({
           title: 'Dé de pièces trouvées',
           message: 'Vous gagnez des pièces !',
           buttonLabel: 'Ok',
@@ -144,7 +151,7 @@ export class GameLogic {
     if (interaction.coinLost) {
       let coins = interaction.coins;
       if (coins == undefined) {
-        this.dice.throw({
+        this.dice.roll({
           title: 'Dé de pièces perdues',
           message: 'Vous perdez des pièces...',
           buttonLabel: 'Ok',
@@ -157,7 +164,7 @@ export class GameLogic {
     if (interaction.heroHeal) {
       let health = interaction.health;
       if (health == undefined) {
-        this.dice.throw({
+        this.dice.roll({
           title: 'Dé de gain de vie',
           message: 'Vous gagnez de la vie !',
           buttonLabel: 'Ok',
@@ -170,7 +177,7 @@ export class GameLogic {
     if (interaction.heroHit) {
       let damages = interaction.health;
       if (damages == undefined) {
-        this.dice.throw({
+        this.dice.roll({
           title: 'Dé de perte de vie',
           message: 'Vous prenez des dégâts...',
           buttonLabel: 'Ok',
